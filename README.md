@@ -1,6 +1,6 @@
-# Machine Learning based Quiz System and preparation system – Frontend
+# AI based Quiz System and preparation system – Frontend
 
-This is the **frontend** of the Machine Learning-Based Quiz & Preparation Suggestion System — an intelligent platform for teachers to create quizzes (manually or using AI) and for students to attempt them securely with real-time cheating prevention mechanisms and personalized AI feedback.
+This is the **frontend** of the AI Based Quiz & Preparation Suggestion System — an intelligent platform for teachers to create quizzes (manually or using AI) and for students to attempt them securely with real-time cheating prevention mechanisms and personalized AI feedback.
 
 ---
 
