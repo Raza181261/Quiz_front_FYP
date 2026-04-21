@@ -66,7 +66,7 @@ export default function SignUpPage() {
         router.replace("/teacher/dashboard");
       } else if (user.role === "student") {
         router.replace("/student/dashboard");
-      }
+      } 
     }
   }, [user, router]);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -80,26 +80,58 @@ export default function SignUpPage() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true);
+  // async function onSubmit(values: z.infer<typeof formSchema>) {
+  //   setIsLoading(true);
 
-    try {
-      await signUp(values.name, values.email, values.password, values.role);
+  //   try {
+  //     await signUp(values.name, values.email, values.password, values.role);
+  //     toast({
+  //       title: "Account created",
+  //       description: `Your ${values.role} account has been created successfully.`,
+  //     });
+  //   } catch (error) {
+  //     toast({
+  //       title: "Sign up failed",
+  //       description:
+  //         "There was an error creating your account. Please try again.",
+  //       variant: "destructive",
+  //     });
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // }
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+  setIsLoading(true);
+
+  try {
+    await signUp(values.name, values.email, values.password, values.role);
+
+    toast({
+      title: "Account created",
+      description: `Your ${values.role} account has been created successfully.`,
+    });
+
+  } catch (error: any) {
+    // Check if the error is "user already exists"
+    if (error.message === "User already exists") {
       toast({
-        title: "Account created",
-        description: `Your ${values.role} account has been created successfully.`,
+        title: "Sign up failed",
+        description: `A ${values.role} with this email already exists.`,
+        variant: "destructive",
       });
-    } catch (error) {
+    } else {
       toast({
         title: "Sign up failed",
         description:
           "There was an error creating your account. Please try again.",
         variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
     }
+  } finally {
+    setIsLoading(false);
   }
+}
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -202,6 +234,7 @@ export default function SignUpPage() {
                               Student
                             </FormLabel>
                           </FormItem>
+                           
                         </RadioGroup>
                       </FormControl>
                       <FormMessage />

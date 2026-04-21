@@ -215,6 +215,7 @@ export default function TeacherManagement() {
                         <th className="px-6 py-4 text-center text-sm font-semibold">
                           Actions
                         </th>
+                        
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-700">

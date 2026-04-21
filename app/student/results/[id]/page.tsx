@@ -54,7 +54,18 @@ export default function QuizResultDetailPage() {
     fetchQuizDetails();
   }, [id, router]);
 
-  // Function to format markdown-like feedback text
+  // Function to parse and format markdown-like feedback text
+  const parseFeedback = (feedback: any) => {
+    if (!feedback) return null;
+    if (typeof feedback === "object") return feedback;
+
+    try {
+      return JSON.parse(feedback);
+    } catch {
+      return feedback;
+    }
+  };
+
   const formatFeedback = (feedback: string) => {
     if (!feedback) return null;
 
@@ -132,6 +143,70 @@ export default function QuizResultDetailPage() {
         </p>
       );
     });
+  };
+
+  const renderFeedback = (feedback: any) => {
+    if (!feedback) return null;
+
+    if (typeof feedback === "string") {
+      return formatFeedback(feedback);
+    }
+
+    return (
+      <div className="space-y-6">
+        {feedback.overallFeedback && (
+          <div>
+            <h3 className="text-lg font-semibold">Overall Feedback</h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              {feedback.overallFeedback}
+            </p>
+          </div>
+        )}
+
+        {feedback.weakAreas?.length > 0 && (
+          <div>
+            <h3 className="text-lg font-semibold">Weak Areas</h3>
+            <div className="space-y-3 mt-3">
+              {feedback.weakAreas.map((item: any, index: number) => (
+                <div key={index} className="rounded-lg border p-4">
+                  <p className="font-medium">{item.question}</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {item.feedback}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {feedback.strongAreas?.length > 0 && (
+          <div>
+            <h3 className="text-lg font-semibold">Strong Areas</h3>
+            <div className="space-y-3 mt-3">
+              {feedback.strongAreas.map((item: any, index: number) => (
+                <div key={index} className="rounded-lg border p-4">
+                  <p className="font-medium">{item.question}</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {item.feedback}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {feedback.improvementSuggestions?.length > 0 && (
+          <div>
+            <h3 className="text-lg font-semibold">Improvement Suggestions</h3>
+            <ul className="mt-3 list-disc list-inside space-y-2 text-sm text-muted-foreground">
+              {feedback.improvementSuggestions.map((suggestion: string, index: number) => (
+                <li key={index}>{suggestion}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    );
   };
 
   if (loading) {
@@ -218,7 +293,7 @@ export default function QuizResultDetailPage() {
           </CardHeader>
           <CardContent>
             <div className="prose prose-sm max-w-none dark:prose-invert">
-              {formatFeedback(resultData.feedback)}
+              {renderFeedback(parseFeedback(resultData.feedback))}
             </div>
           </CardContent>
         </Card>

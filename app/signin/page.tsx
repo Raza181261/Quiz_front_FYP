@@ -66,7 +66,7 @@ export default function SignInPage() {
       } else if (user.role === "student") {
         router.replace("/student/dashboard");
       } else if (user.role === "admin") {
-        router.replace("/admin/"); // Add admin route
+        router.replace("/admin"); // Add admin route
       }
     }
   }, [user, router]);

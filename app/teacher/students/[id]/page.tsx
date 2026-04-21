@@ -84,22 +84,22 @@ export default function StudentDetailsPage({
 
   useEffect(() => {
     // In a real app, you would fetch the student data from your API
-    // const fetchStudentData = async () => {
-    //   try {
-    //     setLoading(true);
-    //     // Simulate API call
-    //     await new Promise((resolve) => setTimeout(resolve, 1000));
+    const fetchStudentData = async () => {
+      try {
+        setLoading(true);
+        // Simulate API call
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    //     // Use mock data for demo
-    //     setStudent(mockStudentData);
-    //     setError(null);
-    //   } catch (error) {
-    //     console.error("Failed to fetch student data:", error);
-    //     setError("Failed to load student data. Please try again.");
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // };
+        // Use mock data for demo
+        setStudent(mockStudentData);
+        setError(null);
+      } catch (error) {
+        console.error("Failed to fetch student data:", error);
+        setError("Failed to load student data. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
     const fetchStudentDetails = async () => {
       try {
         setLoading(true);
@@ -118,7 +118,7 @@ export default function StudentDetailsPage({
 
     fetchStudentDetails();
 
-    // fetchStudentData();
+    fetchStudentData(); // Remove this line when using real API data
   }, [studentId]);
 
   const handleSendMessage = async () => {

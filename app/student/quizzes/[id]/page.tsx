@@ -68,6 +68,8 @@ export default function TakeQuizPage({ params }: { params: { id: string } }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [timeLeft, setTimeLeft] = useState(0);
   const [score, setScore] = useState(0);
+  const [feedback, setFeedback] = useState<any>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showQuizCodeInput, setShowQuizCodeInput] = useState(true);
   const [quizCodeInput, setQuizCodeInput] = useState("");
   const [isJoiningQuiz, setIsJoiningQuiz] = useState(false);
@@ -405,9 +407,10 @@ export default function TakeQuizPage({ params }: { params: { id: string } }) {
   };
 
   const handleSubmitQuiz = async () => {
-    if (quizSubmittedRef.current) return; // Prevent multiple submissions
+    if (quizSubmittedRef.current || isSubmitting) return; // Prevent multiple submissions
 
     quizSubmittedRef.current = true;
+    setIsSubmitting(true);
 
     try {
       const answersObj = form.getValues().answers;
@@ -428,6 +431,7 @@ export default function TakeQuizPage({ params }: { params: { id: string } }) {
       const { score, feedback } = response.data;
       console.log("🚀 ~ handleSubmitQuiz ~ feedback:", feedback);
       setScore(score);
+      setFeedback(feedback);
       toast({ title: "Quiz submitted successfully!" });
 
       // Clean up any timers
@@ -438,6 +442,9 @@ export default function TakeQuizPage({ params }: { params: { id: string } }) {
       if (document.fullscreenElement && document.exitFullscreen) {
         document.exitFullscreen().catch((err) => console.error(err));
       }
+
+      const resultPageId = response.data.resultId || quizData._id;
+      router.push(`/student/results/${resultPageId}`);
     } catch (error: any) {
       console.error(error);
       toast({
@@ -448,6 +455,8 @@ export default function TakeQuizPage({ params }: { params: { id: string } }) {
 
       // Still mark as submitted to prevent further anti-cheat warnings
       setQuizSubmitted(true);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -629,6 +638,22 @@ export default function TakeQuizPage({ params }: { params: { id: string } }) {
           </Card>
         )}
 
+        {isSubmitting && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+            <Card className="w-full max-w-lg">
+              <CardHeader>
+                <CardTitle>Submitting Quiz...</CardTitle>
+                <CardDescription>
+                  Please wait while we fetch your quiz results.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex items-center justify-center py-6">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         {/* Active Quiz */}
         {quizStarted && quizData && !quizSubmitted && (
           <>
@@ -729,8 +754,15 @@ export default function TakeQuizPage({ params }: { params: { id: string } }) {
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
                     ) : (
-                      <Button type="button" onClick={handleSubmitQuiz}>
-                        Submit Quiz
+                      <Button type="button" onClick={handleSubmitQuiz} disabled={isSubmitting}>
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Submitting...
+                          </>
+                        ) : (
+                          "Submit Quiz"
+                        )}
                       </Button>
                     )}
                   </CardFooter>
@@ -751,6 +783,12 @@ export default function TakeQuizPage({ params }: { params: { id: string } }) {
             </CardHeader>
             <CardContent>
               <p className="text-lg font-medium">Score: {score}%</p>
+              {feedback && (
+                <div className="mt-4">
+                  <h3 className="text-md font-semibold mb-2">AI Feedback:</h3>
+                  <p className="text-sm text-muted-foreground">{feedback}</p>
+                </div>
+              )}
             </CardContent>
             <CardFooter>
               <Button asChild className="w-full">
