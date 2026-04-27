@@ -1,4 +1,4 @@
-# AI based Quiz System and preparation system – Frontend
+# AI based Quiz System  – Frontend
 
 This is the **frontend** of the AI Based Quiz & Preparation Suggestion System — an intelligent platform for teachers to create quizzes (manually or using AI) and for students to attempt them securely with real-time cheating prevention mechanisms and personalized AI feedback.
 
@@ -41,7 +41,7 @@ This is the **frontend** of the AI Based Quiz & Preparation Suggestion System �
 # Clone the repository
 
 ```bash
-git clone https://github.com/hamza-mqbl/quiz-app.git
+git clone https://github.com/Raza181261/Quiz_front_FYP
 ```
 
 ```bash
@@ -51,7 +51,7 @@ cd quiz-app
 # Install dependencies
 
 ```bash
-npm install --legacy-per-deps
+npm install --legacy-peer-deps
 ```
 
 # Run development server

@@ -280,7 +280,7 @@ export default function StudentDetailsPage({
             </Button>
             {/* <Button
               className="flex-1 md:flex-none"
-              onClick={handleSendMessage}
+              onClick={handleSendMessage} 
               disabled={sendingMessage}
             >
               {sendingMessage ? (
