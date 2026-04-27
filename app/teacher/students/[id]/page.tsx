@@ -278,7 +278,7 @@ export default function StudentDetailsPage({
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Students
             </Button>
-            <Button
+            {/* <Button
               className="flex-1 md:flex-none"
               onClick={handleSendMessage}
               disabled={sendingMessage}
@@ -294,7 +294,7 @@ export default function StudentDetailsPage({
                   Message Student
                 </>
               )}
-            </Button>
+            </Button> */}
           </div>
         </div>
 

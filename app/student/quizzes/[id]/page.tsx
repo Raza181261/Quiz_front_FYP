@@ -380,6 +380,18 @@ export default function TakeQuizPage({ params }: { params: { id: string } }) {
       .padStart(2, "0")}`;
   };
 
+  const getRemainingSeconds = (quiz: any) => {
+    const publishedAt = quiz?.publishedAt
+      ? new Date(quiz.publishedAt)
+      : null;
+    if (!publishedAt) {
+      return quiz?.timeLimit ? quiz.timeLimit * 60 : 20 * 60;
+    }
+
+    const expiryTime = publishedAt.getTime() + (quiz.timeLimit || 20) * 60000;
+    return Math.max(0, Math.floor((expiryTime - Date.now()) / 1000));
+  };
+
   const handleTimeUp = () => {
     toast({
       title: "Time's up!",
@@ -414,16 +426,17 @@ export default function TakeQuizPage({ params }: { params: { id: string } }) {
 
     try {
       const answersObj = form.getValues().answers;
-      // Ensure all questions have an answer, default to "" if unanswered
-      const answersArray = quizData.questions.map(
-        (q: any) => answersObj[q._id] || ""
-      ); // Default to empty string if no answer
+      // Build answer objects using the question _id so evaluation uses IDs instead of indexes
+      const answersPayload = quizData.questions.map((q: any) => ({
+        questionId: q._id,
+        selectedOption: answersObj[q._id] || "",
+      }));
 
-      console.log("Submitting answers:", answersArray); // Debug log
+      console.log("Submitting answers:", answersPayload); // Debug log
 
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/quiz/submit/${quizData._id}`,
-        { answers: answersArray },
+        { answers: answersPayload },
         { withCredentials: true }
       );
       setQuizSubmitted(true);
@@ -519,12 +532,22 @@ export default function TakeQuizPage({ params }: { params: { id: string } }) {
         });
       }
 
-      // Make the API call with or without location
-      const response = await axios.get(url);
+      // Make the API call with or without location. Include credentials so auth cookies are sent.
+      const response = await axios.get(url, { withCredentials: true });
       const quiz = response.data.quiz;
+      const remainingSeconds = getRemainingSeconds(quiz);
+
+      if (remainingSeconds <= 0) {
+        toast({
+          title: "Quiz expired",
+          description: "This quiz is no longer available.",
+          variant: "destructive",
+        });
+        return;
+      }
 
       setQuizData(quiz);
-      setTimeLeft(quiz.timeLimit * 60 || 30 * 60);
+      setTimeLeft(remainingSeconds);
 
       // Start quiz directly - backend has already verified everything
       startQuiz();

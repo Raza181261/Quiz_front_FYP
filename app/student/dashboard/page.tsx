@@ -94,10 +94,11 @@ export default function StudentDashboard() {
     },
     {
       title: "Last Quiz",
-      value: recentResults[0]?.date || "No Quiz Yet",
+      // value: recentResults[0]?.date || "No Quiz Yet",
+      value: recentResults[0]?.title|| "No Quiz Yet",
       icon: Clock,
       description: recentResults[0]?.title || "-",
-    },
+    },  
   ];
 
   const filteredAvailableQuizzes = availableQuizzes.filter(

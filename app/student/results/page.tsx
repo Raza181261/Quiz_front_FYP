@@ -44,7 +44,7 @@ interface QuizResult {
   correctAnswers: number;
   timeSpent: string;
   completedAt: string;
-  status: "passed" | "failed";
+  status: "passed" | "failed" | "missed";
   teacher: string;
   difficulty: "easy" | "medium" | "hard";
   passingScore: number;
@@ -90,10 +90,10 @@ export default function StudentResults() {
           completedAt: new Date(
             result.completedAt || result.createdAt
           ).toLocaleDateString(),
-          status:
-            parseInt(result.score) >= (result.passingScore || 60)
+          status: result.status ||
+            (parseInt(result.score) >= (result.passingScore || 60)
               ? "passed"
-              : "failed",
+              : "failed"),
           teacher: result.teacher || "Unknown Teacher",
           passingScore: result.passingScore || 60,
         }));
